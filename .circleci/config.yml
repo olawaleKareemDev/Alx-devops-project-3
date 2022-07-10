@@ -70,6 +70,7 @@ jobs:
       - run:
           name: Scan front-end
           command: |
+            cd frontend
             npm install
             npm audit --audit-level=critical
 
@@ -82,9 +83,10 @@ jobs:
       - run:
           name: Scan back-end
           command: |
+            cd backend
             npm install
             npm audit --audit-level=critical
-
+            
 workflows:
   default:
     jobs:
@@ -94,7 +96,7 @@ workflows:
           requires: [build-frontend]
       - test-backend:
           requires: [build-backend]
-      - scan-backend:
-          requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
+      - scan-backend:
+          requires: [build-backend]
