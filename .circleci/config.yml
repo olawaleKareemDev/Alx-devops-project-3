@@ -132,3 +132,4 @@ workflows:
           requires: [build-backend]
       - slack-integration:
           context: udapeople-integration
+          requires: [scan-frontend, scan-backend]
