@@ -34,7 +34,6 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
-
   test-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -47,8 +46,7 @@ jobs:
           command: |
             cd frontend
             npm install
-            npm run test
-                
+            npm run test             
   test-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -63,6 +61,32 @@ jobs:
             npm install
             npm run test
 
+  scan-frontend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - restore_cache:
+          keys: [frontend-build-scan]
+      - run:
+          name: Scan front-end
+          command: |
+            cd frontend
+            npm install
+            npm audit --audit-level=critical
+
+  scan-backend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - restore_cache:
+          keys: [backend-build-scan]
+      - run:
+          name: Scan back-end
+          command: |
+            cd backend
+            npm install
+            npm audit --audit-level=critical
+            
 workflows:
   default:
     jobs:
@@ -72,3 +96,7 @@ workflows:
           requires: [build-frontend]
       - test-backend:
           requires: [build-backend]
+      - scan-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
