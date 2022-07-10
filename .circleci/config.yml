@@ -1,5 +1,7 @@
 version: 2.1
-
+orbs: 
+  slack: circleci/slack@4.10.1
+  node: 'circleci/node:4.1'
 
 jobs:
   build-frontend:
@@ -60,7 +62,6 @@ jobs:
             cd backend
             npm install
             npm run test
-
   scan-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -74,9 +75,8 @@ jobs:
             cd frontend
             npm install
             npm audit fix --audit-level=critical --force 
-            npm audit fix --force         
+            # npm audit fix --force         
             npm audit --audit-level=critical
-
   scan-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -90,9 +90,23 @@ jobs:
             cd backend
             npm install
             npm audit fix --audit-level=critical --force          
-            npm audit fix --force             
+            # npm audit fix --force             
             npm audit --audit-level=critical
-            
+
+  slack-integration:
+
+    executor:
+      name: node/default
+    steps:
+      - checkout
+      - node/install-packages
+      - run:
+          command: npm run deploy
+      - slack/notify:
+          channel: @udapeople-integration
+          event: fail
+          template: basic_fail_1    
+
 workflows:
   default:
     jobs:
@@ -106,3 +120,5 @@ workflows:
           requires: [build-frontend]
       - scan-backend:
           requires: [build-backend]
+      - slack-integration:
+          context: udapeople-integration
