@@ -96,8 +96,10 @@ jobs:
             npm audit --audit-level=critical
 
   slack-integration:
-    executor:
-      name: node/default
+    # executor:
+    #   name: node/default
+    docker:
+      - image: circleci/node:13.8.0
     steps:
       - checkout
       # - run:
@@ -106,7 +108,7 @@ jobs:
       - run:
           command: |
             cd backend
-            node/install-packages
+            npm install
             npm run deploy
       - slack/notify:
           channel: udapeople-integration
