@@ -95,7 +95,7 @@ jobs:
             # npm audit fix --force             
             npm audit --audit-level=critical
 
-  slack-integration:
+  slack-integration-frontend:
         docker:
         - image: 'cimg/base:stable'
         steps:
@@ -108,14 +108,36 @@ jobs:
                       "fields": [
                         {
                           "type": "plain_text",
-                          "text": "*This is a text notification*",
+                          "text": "The Frontend integration just failed.",
                           "emoji": true
                         }
                       ]
                     }
                   ]
                 }
-              event: always    
+              event: fail    
+
+  slack-integration-backend:
+        docker:
+        - image: 'cimg/base:stable'
+        steps:
+          - slack/notify:
+              custom: |
+                {
+                  "blocks": [
+                    {
+                      "type": "section",
+                      "fields": [
+                        {
+                          "type": "plain_text",
+                          "text": "The backend integration just failed.",
+                          "emoji": true
+                        }
+                      ]
+                    }
+                  ]
+                }
+              event: fail 
 
 workflows:
   default:
@@ -130,6 +152,9 @@ workflows:
           requires: [build-frontend]
       - scan-backend:
           requires: [build-backend]
-      - slack-integration:
+      - slack-integration-frontend:
           context: udapeople-integration
-          requires: [scan-frontend, scan-backend]
+          requires: [scan-frontend]
+      - slack-integration-backend:
+          context: udapeople-integration
+          requires: [scan-backend]
