@@ -96,7 +96,7 @@ jobs:
             npm audit --audit-level=critical
 
   slack-integration:
-    docker:
+        docker:
         - image: 'cimg/base:stable'
         steps:
           - slack/notify:
