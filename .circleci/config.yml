@@ -96,24 +96,26 @@ jobs:
             npm audit --audit-level=critical
 
   slack-integration:
-    # executor:
-    #   name: node/default
     docker:
-      - image: circleci/node:13.8.0
-    steps:
-      - checkout
-      # - run:
-      #     command: cd backend
-      # - node/install-packages
-      - run:
-          command: |
-            cd backend
-            npm install
-            npm run deploy
-      - slack/notify:
-          channel: udapeople-integration
-          event: fail
-          template: basic_fail_1    
+        - image: 'cimg/base:stable'
+        steps:
+          - slack/notify:
+              custom: |
+                {
+                  "blocks": [
+                    {
+                      "type": "section",
+                      "fields": [
+                        {
+                          "type": "plain_text",
+                          "text": "*This is a text notification*",
+                          "emoji": true
+                        }
+                      ]
+                    }
+                  ]
+                }
+              event: fail    
 
 workflows:
   default:
