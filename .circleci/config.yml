@@ -94,11 +94,12 @@ jobs:
             npm audit --audit-level=critical
 
   slack-integration:
-
     executor:
       name: node/default
     steps:
       - checkout
+      - run:
+          command: cd backend
       - node/install-packages
       - run:
           command: npm run deploy
