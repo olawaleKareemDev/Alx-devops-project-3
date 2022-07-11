@@ -78,7 +78,7 @@ jobs:
       - run:
           name: Build front-end
           command: |
-            # cd frontend
+            cd frontend
             npm install
             npm run build
       - save_cache:
@@ -94,7 +94,7 @@ jobs:
       - run:
           name: Back-end build
           command: |
-            # cd backend
+            cd backend
             npm install
             npm run build
       - save_cache:
@@ -136,7 +136,7 @@ jobs:
       - run:
           name: Scan front-end
           command: |
-            cd frontend
+            # cd frontend
             npm install
             npm audit fix --audit-level=critical --force 
             # npm audit fix --force         
@@ -151,86 +151,37 @@ jobs:
       - run:
           name: Scan back-end
           command: |
-            cd backend
+            # cd backend
             npm install
             npm audit fix --audit-level=critical --force          
             # npm audit fix --force             
             npm audit --audit-level=critical
-  slack-integration:
+  
 
-    docker:
-    - image: 'cimg/base:stable'
-    steps:
-      - slack/notify:
-          branch_pattern: master
-          custom: |
-            {
-              "blocks": [
-                {
-                  "type": "section",
-                  "fields": [
-                    {
-                      "type": "plain_text",
-                      "text": "The pipeline scan integration just failed.",
-                      "emoji": true
-                    }
-                  ]
-                }
-              ]
-            }
-          event: pass    
-
-
-  # build:
-  #   docker:
-  #     - image: cimg/base:stable
-  #   steps:
-  #     - run:
-  #         name: Success
-  #         command: |
-  #           exit 1
-  # last-job:
-  #   docker:
-  #     - image: cimg/base:stable
-  #   steps:
-  #     - run:
-  #         name: Success
-  #         command: |
-  #           exit 0
 
 workflows:
   version: 2
   default:
     jobs:
-      - build-frontend:
+      - build-frontend
+      - build-backend
+      - test-frontend:
+          requires: [build-frontend]
+      - test-backend:
+          requires: [build-backend]
+      - scan-frontend:
+          requires: [build-frontend]
+            context: udapeople-integration
+            <<: *slack-fail-post-step
+      - scan-backend:
+          requires: [build-backend]
+            context: udapeople-integration
+            <<: *slack-fail-post-step
+      - slack-integration:
           context: udapeople-integration
-          <<: *slack-fail-post-step
-      - build-backend:
-          context: udapeople-integration
-          <<: *slack-fail-post-step
-      # - test-frontend:
-      #     requires: [build-frontend]
-      # - test-backend:
-      #     requires: [build-backend]
-      # - scan-frontend:
-      #     requires: [build-frontend]
-      # - scan-backend:
-      #     requires: [build-backend]
-      # - slack-integration:
-      #     context: udapeople-integration
 
 
 
-  # version: 2
-  # workflow:
-  #   jobs:
-  #     - build:
-  #         context: udapeople-integration
-  #         <<: *slack-fail-post-step
-  #     - last-job:
-  #         context: udapeople-integration
-  #         requires:
-  #           - build
-  #         <<: *slack-success-pre-step
+
           
 
