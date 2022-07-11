@@ -252,6 +252,11 @@ workflows:
           requires: [build-backend]
           context: udapeople-integration
           <<: *slack-fail-post-step
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          filters:
+            branches:
+              only: [master]
 
 
 
