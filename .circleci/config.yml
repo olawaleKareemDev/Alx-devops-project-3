@@ -224,9 +224,9 @@ jobs:
                   --output text )
               if $IP
               then
-                return 0
+                exit 0
               else
-                return 1
+                exit 1
               fi
               - destroy_environment 
 
