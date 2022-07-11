@@ -78,7 +78,7 @@ jobs:
       - run:
           name: Build front-end
           command: |
-            cd frontend
+            # cd frontend
             npm install
             npm run build
       - save_cache:
@@ -94,7 +94,7 @@ jobs:
       - run:
           name: Back-end build
           command: |
-            cd backend
+            # cd backend
             npm install
             npm run build
       - save_cache:
@@ -181,49 +181,56 @@ jobs:
           event: pass    
 
 
-  build:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - run:
-          name: Success
-          command: |
-            exit 1
-  last-job:
-    docker:
-      - image: cimg/base:stable
-    steps:
-      - run:
-          name: Success
-          command: |
-            exit 0
+  # build:
+  #   docker:
+  #     - image: cimg/base:stable
+  #   steps:
+  #     - run:
+  #         name: Success
+  #         command: |
+  #           exit 1
+  # last-job:
+  #   docker:
+  #     - image: cimg/base:stable
+  #   steps:
+  #     - run:
+  #         name: Success
+  #         command: |
+  #           exit 0
 
 workflows:
-  # default:
-  #   jobs:
-  #     - build-frontend
-  #     - build-backend
-  #     - test-frontend:
-  #         requires: [build-frontend]
-  #     - test-backend:
-  #         requires: [build-backend]
-  #     - scan-frontend:
-  #         requires: [build-frontend]
-  #     - scan-backend:
-  #         requires: [build-backend]
-  #     - slack-integration:
-  #         context: udapeople-integration
-
   version: 2
-  workflow:
+  default:
     jobs:
-      - build:
+      - build-frontend
           context: udapeople-integration
           <<: *slack-fail-post-step
-      - last-job:
+      - build-backend
           context: udapeople-integration
-          requires:
-            - build
-          <<: *slack-success-pre-step
+          <<: *slack-fail-post-step
+      # - test-frontend:
+      #     requires: [build-frontend]
+      # - test-backend:
+      #     requires: [build-backend]
+      # - scan-frontend:
+      #     requires: [build-frontend]
+      # - scan-backend:
+      #     requires: [build-backend]
+      # - slack-integration:
+      #     context: udapeople-integration
+
+
+
+  # version: 2
+  # workflow:
+  #   jobs:
+  #     - build:
+  #         context: udapeople-integration
+  #         <<: *slack-fail-post-step
+  #     - last-job:
+  #         context: udapeople-integration
+  #         requires:
+  #           - build
+  #         <<: *slack-success-pre-step
           
 
