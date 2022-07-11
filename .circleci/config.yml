@@ -79,7 +79,6 @@ slack-success-pre-step: &slack-success-pre-step
           }
         event: pass
 
-
 orbs:
   slack: circleci/slack@4.1
 
