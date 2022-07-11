@@ -96,26 +96,30 @@ jobs:
             npm audit --audit-level=critical
 
   slack-integration:
-        docker:
-        - image: 'cimg/base:stable'
-        steps:
-          - slack/notify:
-              custom: |
+
+    docker:
+    - image: 'cimg/base:stable'
+    steps:
+      - slack/notify:
+          branch_pattern: master
+          custom: |
+            {
+              "blocks": [
                 {
-                  "blocks": [
+                  "type": "section",
+                  "fields": [
                     {
-                      "type": "section",
-                      "fields": [
-                        {
-                          "type": "plain_text",
-                          "text": "The pipeline scan integration just failed.",
-                          "emoji": true
-                        }
-                      ]
+                      "type": "plain_text",
+                      "text": "The pipeline scan integration just failed.",
+                      "emoji": true
                     }
                   ]
                 }
-              event: always    
+              ]
+            }
+          event: fail    
+
+
 
   # slack-integration-backend:
   #       docker:
