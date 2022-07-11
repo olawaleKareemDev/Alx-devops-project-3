@@ -115,7 +115,7 @@ jobs:
                     }
                   ]
                 }
-              event: fail    
+              event: always    
 
   # slack-integration-backend:
   #       docker:
@@ -154,7 +154,7 @@ workflows:
           requires: [build-backend]
       - slack-integration:
           context: udapeople-integration
-          requires: [scan-frontend, scan-backend]
+          # requires: [scan-frontend, scan-backend]
       # - slack-integration-backend:
       #     context: udapeople-integration
       #     requires: [scan-backend]
