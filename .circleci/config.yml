@@ -221,7 +221,7 @@ jobs:
               IP=$(aws --region us-east-2 \
                   ec2 describe-instances \
                   --query 'Reservations[*].Instances[*].[PublicIpAddress]' \
-                  --output text --profile udacity-devops-config)
+                  --output text )
               if IP
               then
                 return 0
