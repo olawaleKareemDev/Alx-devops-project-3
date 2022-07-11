@@ -207,7 +207,7 @@ jobs:
               aws --region us-east-2 \
                   ec2 describe-instances \
                   --query 'Reservations[*].Instances[*].[PublicIpAddress]' \
-                  --output text --profile udacity-devops-config >> inventory.txt
+                  --output text >> inventory.txt
         - persist_to_workspace:
             root: ~/
             paths:
