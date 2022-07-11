@@ -202,10 +202,10 @@ workflows:
   version: 2
   default:
     jobs:
-      - build-frontend
+      - build-frontend:
           context: udapeople-integration
           <<: *slack-fail-post-step
-      - build-backend
+      - build-backend:
           context: udapeople-integration
           <<: *slack-fail-post-step
       # - test-frontend:
