@@ -220,18 +220,18 @@ jobs:
       - run: apk add --update curl
       - run:
           name: smoke test
-            command: |
-              IP=$(aws --region us-east-2 \
-                  ec2 describe-instances \
-                  --query 'Reservations[*].Instances[*].[PublicIpAddress]' \
-                  --output text --profile udacity-devops-config)
-              if IP
-              then
-                return 0
-              else
-                return 1
-              fi
-      - destroy_environment 
+          command: |
+            IP=$(aws --region us-east-2 \
+                ec2 describe-instances \
+                --query 'Reservations[*].Instances[*].[PublicIpAddress]' \
+                --output text --profile udacity-devops-config)
+            if IP
+            then
+              return 0
+            else
+              return 1
+            fi
+            - destroy_environment 
 
 
 workflows:
