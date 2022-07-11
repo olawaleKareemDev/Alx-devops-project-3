@@ -30,7 +30,6 @@ slack-fail-post-step: &slack-fail-post-step
             ]
           }
         event: fail
-
 slack-success-pre-step: &slack-success-pre-step
   post-steps:
     - slack/notify:
@@ -62,9 +61,26 @@ slack-success-pre-step: &slack-success-pre-step
           }
         event: pass
 
+commands:
+  destroy-environment:
+    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+    parameters:
+      udapeople-frontend:
+        type: string
+        default: udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
+      udapeople-backend:
+        type: string
+        default: udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+    steps:
+      - run:
+          name: Destroy environments
+          when: on_fail
+          command: |
+           aws cloudformation delete-stack --stack-name << parameters.udapeople-frontend >>  --region us-east-2
+           aws cloudformation delete-stack --stack-name << parameters.udapeople-backend >>  --region us-east-2
+
 orbs:
   slack: circleci/slack@4.1
-
 
 jobs:
   build-frontend:
@@ -156,6 +172,66 @@ jobs:
             npm audit fix --force             
             npm audit --audit-level=critical
   
+deploy-infrastructure:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Install tar and gzip
+          command: |
+            apk add --update tar
+            apk add --update gzip
+      - run:
+          name: Udapeople backend Cloudformation Stack
+          command: |
+            aws cloudformation deploy \
+                --template-file .circleci/files/backend.yml \
+                --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+                --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
+                --tags project=udapeople
+                --region us-east-2
+      - run:
+          name: Udapeople frontend Cloudformation Stack
+          command: |
+            aws cloudformation deploy \
+                --template-file .circleci/files/frontend.yml \
+                --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+                --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
+                --tags project=udapeople
+                --region us-east-2
+      - run:
+          name: Get instance IDs
+          command: |
+            echo [All] > inventory.txt
+            aws --region us-east-2 \
+                ec2 describe-instances \
+                --query 'Reservations[*].Instances[*].[PublicIpAddress]' \
+                --output text --profile udacity-devops-config >> inventory.txt
+      - persist_to_workspace:
+          root: .
+          paths:
+            - inventory.txt
+
+smoke_test:
+  docker:
+    - image: alpine:latest
+  steps:
+    - run: apk add --update curl
+    - run:
+        name: smoke test
+          command: |
+            IP=$(aws --region us-east-2 \
+                ec2 describe-instances \
+                --query 'Reservations[*].Instances[*].[PublicIpAddress]' \
+                --output text --profile udacity-devops-config)
+            if IP
+            then
+              return 0
+            else
+              return 1
+            fi
+    - destroy_environment 
 
 
 workflows:
