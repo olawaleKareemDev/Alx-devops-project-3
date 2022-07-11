@@ -184,6 +184,9 @@ jobs:
               # apt-get upgrade
               # apt-get install tar -y
               # apt-get -y install gzip
+              yum update
+              yum upgrade
+              # yum makecache
               yum install tar
         - run:
             name: Ensure back-end infrastructure exists
