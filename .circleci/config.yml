@@ -214,41 +214,13 @@ jobs:
             root: ~/
             paths:
               - project/.circleci/ansible/inventory.txt
+            exit 1
 
-        - run:
-            name: destroy infrastructure
-            command: |
-              IP=$(aws --region us-east-2 \
-                  ec2 describe-instances \
-                  --query 'Reservations[*].Instances[*].[PublicIpAddress]' \
-                  --output text )
-              if $IP
-              then
-                exit 0
-              else
-                exit 1
-              fi
-              - destroy_environment 
+        - destroy_environment 
 
-  # smoke_test:
-  #   docker:
-  #     - image: alpine:latest
-  #   steps:
-  #     - run: apk add --update curl
-  #     - run:
-  #         name: smoke test
-  #         command: |
-  #           IP=$(aws --region us-east-2 \
-  #               ec2 describe-instances \
-  #               --query 'Reservations[*].Instances[*].[PublicIpAddress]' \
-  #               --output text --profile udacity-devops-config)
-  #           if IP
-  #           then
-  #             return 0
-  #           else
-  #             return 1
-  #           fi
-  #           - destroy_environment 
+echo $(aws --region us-east-2 ec2 describe-instances \
+       --query 'Reservations[*].Instances[*].[PublicIpAddress]' \
+       --output text --profile udacity-devops-config)[0];
 
 
 workflows:
