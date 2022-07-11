@@ -95,7 +95,7 @@ jobs:
             # npm audit fix --force             
             npm audit --audit-level=critical
 
-  slack-integration-frontend:
+  slack-integration:
         docker:
         - image: 'cimg/base:stable'
         steps:
@@ -108,7 +108,7 @@ jobs:
                       "fields": [
                         {
                           "type": "plain_text",
-                          "text": "The Frontend integration just failed.",
+                          "text": "The pipeline scan integration just failed.",
                           "emoji": true
                         }
                       ]
@@ -117,27 +117,27 @@ jobs:
                 }
               event: fail    
 
-  slack-integration-backend:
-        docker:
-        - image: 'cimg/base:stable'
-        steps:
-          - slack/notify:
-              custom: |
-                {
-                  "blocks": [
-                    {
-                      "type": "section",
-                      "fields": [
-                        {
-                          "type": "plain_text",
-                          "text": "The backend integration just failed.",
-                          "emoji": true
-                        }
-                      ]
-                    }
-                  ]
-                }
-              event: always
+  # slack-integration-backend:
+  #       docker:
+  #       - image: 'cimg/base:stable'
+  #       steps:
+  #         - slack/notify:
+  #             custom: |
+  #               {
+  #                 "blocks": [
+  #                   {
+  #                     "type": "section",
+  #                     "fields": [
+  #                       {
+  #                         "type": "plain_text",
+  #                         "text": "The backend integration just failed.",
+  #                         "emoji": true
+  #                       }
+  #                     ]
+  #                   }
+  #                 ]
+  #               }
+  #             event: always
 
 workflows:
   default:
@@ -152,9 +152,9 @@ workflows:
           requires: [build-frontend]
       - scan-backend:
           requires: [build-backend]
-      - slack-integration-frontend:
+      - slack-integration:
           context: udapeople-integration
-          requires: [scan-frontend]
-      - slack-integration-backend:
-          context: udapeople-integration
-          requires: [scan-backend]
+          # requires: [scan-frontend]
+      # - slack-integration-backend:
+      #     context: udapeople-integration
+      #     requires: [scan-backend]
