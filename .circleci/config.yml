@@ -177,8 +177,7 @@ workflows:
           requires: [build-backend]
           context: udapeople-integration
           <<: *slack-fail-post-step
-      - slack-integration:
-          context: udapeople-integration
+
 
 
 
