@@ -177,13 +177,13 @@ jobs:
         - image: amazon/aws-cli
       steps:
         - checkout
+        # - run:
+        #     name: Install tar and gzip
+        #     command: |
+        #       apk add --update tar
+        #       apk add --update gzip
         - run:
-            name: Install tar and gzip
-            command: |
-              apk add --update tar
-              apk add --update gzip
-        - run:
-            name: Udapeople backend Cloudformation Stack
+            name: Ensure back-end infrastructure exists
             command: |
               aws cloudformation deploy \
                   --template-file .circleci/files/backend.yml \
@@ -192,7 +192,7 @@ jobs:
                   --tags project=udapeople
                   --region us-east-2
         - run:
-            name: Udapeople frontend Cloudformation Stack
+            name: Ensure front-end infrastructure exist
             command: |
               aws cloudformation deploy \
                   --template-file .circleci/files/frontend.yml \
@@ -209,15 +209,10 @@ jobs:
                   --query 'Reservations[*].Instances[*].[PublicIpAddress]' \
                   --output text --profile udacity-devops-config >> inventory.txt
         - persist_to_workspace:
-            root: .
+            root: ~/
             paths:
-              - inventory.txt
+              - project/.circleci/ansible/inventory.txt
 
-  smoke_test:
-    docker:
-      - image: alpine:latest
-    steps:
-      - run: apk add --update curl
       - run:
           name: smoke test
           command: |
@@ -233,27 +228,47 @@ jobs:
             fi
             - destroy_environment 
 
+  # smoke_test:
+  #   docker:
+  #     - image: alpine:latest
+  #   steps:
+  #     - run: apk add --update curl
+  #     - run:
+  #         name: smoke test
+  #         command: |
+  #           IP=$(aws --region us-east-2 \
+  #               ec2 describe-instances \
+  #               --query 'Reservations[*].Instances[*].[PublicIpAddress]' \
+  #               --output text --profile udacity-devops-config)
+  #           if IP
+  #           then
+  #             return 0
+  #           else
+  #             return 1
+  #           fi
+  #           - destroy_environment 
+
 
 workflows:
   version: 2
   default:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
-          context: udapeople-integration
-          <<: *slack-fail-post-step
-      - scan-backend:
-          requires: [build-backend]
-          context: udapeople-integration
-          <<: *slack-fail-post-step
+      # - build-frontend
+      # - build-backend
+      # - test-frontend:
+      #     requires: [build-frontend]
+      # - test-backend:
+      #     requires: [build-backend]
+      # - scan-frontend:
+      #     requires: [build-frontend]
+      #     context: udapeople-integration
+      #     <<: *slack-fail-post-step
+      # - scan-backend:
+      #     requires: [build-backend]
+      #     context: udapeople-integration
+      #     <<: *slack-fail-post-step
       - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
             branches:
               only: [master]
