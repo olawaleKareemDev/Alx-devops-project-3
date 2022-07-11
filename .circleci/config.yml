@@ -180,8 +180,10 @@ jobs:
         - run:
             name: Install tar and gzip
             command: |
-              apk add --update tar
-              apk add --update gzip
+              sudo apt-get update
+              sudo apt-get upgrade
+              sudo apt-get install tar -y
+              sudo apt-get -y install gzip
         - run:
             name: Ensure back-end infrastructure exists
             command: |
