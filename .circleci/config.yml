@@ -180,10 +180,11 @@ jobs:
         - run:
             name: Install tar and gzip
             command: |
-              apt-get update
-              apt-get upgrade
-              apt-get install tar -y
-              apt-get -y install gzip
+              # apt-get update
+              # apt-get upgrade
+              # apt-get install tar -y
+              # apt-get -y install gzip
+              yum install tar
         - run:
             name: Ensure back-end infrastructure exists
             command: |
