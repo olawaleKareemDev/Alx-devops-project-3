@@ -222,7 +222,7 @@ jobs:
                   ec2 describe-instances \
                   --query 'Reservations[*].Instances[*].[PublicIpAddress]' \
                   --output text )
-              if IP
+              if $IP
               then
                 return 0
               else
