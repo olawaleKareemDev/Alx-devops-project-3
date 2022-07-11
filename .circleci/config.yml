@@ -171,12 +171,12 @@ workflows:
           requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
-            context: udapeople-integration
-            <<: *slack-fail-post-step
+          context: udapeople-integration
+          <<: *slack-fail-post-step
       - scan-backend:
           requires: [build-backend]
-            context: udapeople-integration
-            <<: *slack-fail-post-step
+          context: udapeople-integration
+          <<: *slack-fail-post-step
       - slack-integration:
           context: udapeople-integration
 
