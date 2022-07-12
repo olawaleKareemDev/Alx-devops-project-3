@@ -220,6 +220,28 @@ jobs:
           udapeople-frontend: udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
           udapeople-backend: udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
 
+  configure_infrastructure: 
+    docker:
+      - image: python:3.7-alpine3.16
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - "d1:e7:8e:82:dc:91:b5:60:cf:68:1a:de:df:21:e0:f8"
+      - attach_workspace:
+          at: ~/project/.circleci/ansible
+      - run:
+          name: Install Ansible
+          command: |
+            apk add --update openssh
+            apk add --update tar
+            apk add --update gzip
+            pip3 install awscli
+            apk add --update ansible
+      - run:
+          name: Run Playbook and Configure server
+          command: |
+            ansible-playbook -i inventory.txt configure-server.yml 
 
 
 
@@ -247,6 +269,8 @@ workflows:
           filters:
             branches:
               only: [master]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
 
 
 
