@@ -215,7 +215,7 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      - run: return 1
+      # - run: return 1
       - destroy_environment:
           udapeople-frontend: udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
           udapeople-backend: udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
