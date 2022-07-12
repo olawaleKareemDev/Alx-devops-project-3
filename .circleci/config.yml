@@ -1,22 +1,43 @@
 version: 2.1
 
+# commands:
+#   destroy-environment:
+#     description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+#     parameters:
+#       udapeople-frontend:
+#         type: string
+#         default: udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
+#       udapeople-backend:
+#         type: string
+#         default: udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+#     steps:
+#       - run:
+#           name: Destroy environments
+#           when: on_fail
+#           command: |
+#            aws cloudformation delete-stack --stack-name << parameters.udapeople-frontend >>  --region us-east-2
+#            aws cloudformation delete-stack --stack-name << parameters.udapeople-backend >>  --region us-east-2
+
 commands:
-  destroy-environment:
-    description: Destroy back-end and front-end cloudformation stacks given a workflow ID.
+  # Exercise: Reusable Job Code
+  print_pipeline_id:
     parameters:
-      udapeople-frontend:
+      id: 
         type: string
-        default: udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
-      udapeople-backend:
-        type: string
-        default: udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+    steps:
+      - run: echo << parameters.id >>
+
+  # Exercise - Rollback
+  destroy_environment:
     steps:
       - run:
-          name: Destroy environments
+          name: Destroy environment
+          # ${CIRCLE_WORKFLOW_ID} is a Built-in environment variable 
+          # ${CIRCLE_WORKFLOW_ID:0:5} takes the first 5 chars of the variable CIRCLE_CI_WORKFLOW_ID 
           when: on_fail
           command: |
-           aws cloudformation delete-stack --stack-name << parameters.udapeople-frontend >>  --region us-east-2
-           aws cloudformation delete-stack --stack-name << parameters.udapeople-backend >>  --region us-east-2
+            # aws cloudformation delete-stack --stack-name myStack-${CIRCLE_WORKFLOW_ID:0:5}
+            echo > "the job just failed"
 
 slack-fail-post-step: &slack-fail-post-step
   post-steps:
@@ -214,9 +235,10 @@ jobs:
           root: ~/
           paths:
             - project/.circleci/ansible/inventory.txt
-      - destroy_environment:
-          udapeople-frontend: udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
-          udapeople-backend: udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+      - run: return 1
+      - destroy_environment
+          # udapeople-frontend: udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
+          # udapeople-backend: udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
 
 
 
