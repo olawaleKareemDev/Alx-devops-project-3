@@ -206,7 +206,7 @@ jobs:
       - run:
           name: Get instance IDs
           command: |
-            echo [All] > inventory.txt
+            echo [all] > inventory.txt
             aws --region us-east-2 \
                 ec2 describe-instances \
                 --query 'Reservations[*].Instances[*].[PublicIpAddress]' \
