@@ -232,7 +232,7 @@ jobs:
           fingerprints:
             - "d1:e7:8e:82:dc:91:b5:60:cf:68:1a:de:df:21:e0:f8"
       - attach_workspace:
-          at: ~/workspace
+          at: /root/project
 
       - run:
           name: check inventory file exists
