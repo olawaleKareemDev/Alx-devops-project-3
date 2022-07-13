@@ -206,15 +206,16 @@ jobs:
       - run:
           name: Get instance IDs
           command: |
-            echo [all] > workspace/inventory.txt
+            echo [all] > inventory.txt
             aws --region us-east-2 \
                 ec2 describe-instances \
                 --query 'Reservations[*].Instances[*].[PublicIpAddress]' \
-                --output text >> workspace/inventory.txt
-            cat ~/workspace/inventory.txt
+                --output text >> inventory.txt
+            cat inventory.txt
             pwd
+            ls
       - persist_to_workspace:
-          root: workspace
+          root: /root/project
           paths:
             - inventory.txt
       # - run: return 1
