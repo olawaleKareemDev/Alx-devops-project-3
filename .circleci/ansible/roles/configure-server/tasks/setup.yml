@@ -30,10 +30,10 @@
     production: yes
     state: present
 
-- name: "install python"
-  become: yes
-  apt:
-    name: python3
-    state: latest
+# - name: "install python"
+#   become: yes
+#   apt:
+#     name: python3
+#     state: latest
 
 
