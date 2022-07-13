@@ -211,7 +211,7 @@ jobs:
                 ec2 describe-instances \
                 --query 'Reservations[*].Instances[*].[PublicIpAddress]' \
                 --output text >> workspace/inventory.txt
-            cat workspace/inventory.txt
+            cat ~/workspace/inventory.txt
             pwd
       - persist_to_workspace:
           root: workspace
