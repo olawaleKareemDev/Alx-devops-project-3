@@ -1,6 +1,6 @@
+AWSTemplateFormatVersion: 2010-09-09
 Description: >
   UdaPeople backend stack.
-
 Parameters:
   ID:
     Description: Unique identifier.
@@ -29,7 +29,7 @@ Resources:
       SecurityGroups:
         - Ref: InstanceSecurityGroup
       KeyName: udacity
-      ImageId: ami-02f3416038bdb17fb 
+      ImageId: 'ami-02f3416038bdb17fb'
       Tags:
         - Key: Name
           Value: !Sub backend-${ID}
