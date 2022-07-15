@@ -210,10 +210,8 @@ jobs:
             aws --region us-east-2 \
                 ec2 describe-instances \
                 --query 'Reservations[*].Instances[*].[PublicIpAddress]' \
-                --output text >> inventory.txt
-            cat inventory.txt
-            pwd
-            ls
+                --output text | sed 's/None//g' | sed -r '/^\s*$/d' >> inventory.txt
+
       - persist_to_workspace:
           root: /root/project
           paths:
@@ -222,6 +220,7 @@ jobs:
       - destroy_environment:
           udapeople-frontend: udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
           udapeople-backend: udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+
 
   configure-infrastructure: 
     docker:
