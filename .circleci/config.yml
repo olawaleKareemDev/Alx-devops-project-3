@@ -281,10 +281,8 @@ jobs:
           command: |
               cd backend
               npm install
-              # npm audit fix --audit-level=critical --force          
-              # npm audit fix --force
-              npm audit  
-              npm audit fix 
+              npm audit fix --audit-level=critical --force          
+              npm audit fix --force
               npm run migrations > migrations_dump.txt
       - run:
           name: Send migration status to kvdb.io 
@@ -297,10 +295,10 @@ jobs:
               fi
 
       - destroy_environment:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
+          id: CIRCLE_WORKFLOW_ID:0:7
 
       - rollback_db_migrations:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}
+          id: CIRCLE_WORKFLOW_ID:0:7
           when: on_fail
       
 
