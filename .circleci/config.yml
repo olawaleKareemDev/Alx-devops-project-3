@@ -459,7 +459,7 @@ workflows:
               only: [master]
 
       - run-migrations:
-          requires: [configure-infrastructure]
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
           filters:
             branches:
               only: [master]
