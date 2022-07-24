@@ -458,5 +458,9 @@ workflows:
               only: [master]
 
       - run-migrations:
+          requires: [configure-infrastructure]
+          filters:
+            branches:
+              only: [master]
 
      
