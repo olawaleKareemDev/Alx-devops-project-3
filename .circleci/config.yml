@@ -25,10 +25,12 @@ commands:
     parameters:
       id:
         type: string
+      when:
+        type: string
     steps:
       - run:
           name: Roll back db migrations
-          when: on_fail
+          when: << parameters.when >>
           working_directory: ./backend
           command: |
             SUCESS = $(curl https://kvdb.io/A7wDcVJiAKXkXhM3EhvbLw/migration_<< parameters.id>>  -u 'supersecret:' )
@@ -305,8 +307,9 @@ jobs:
       - destroy_environment:
           id: ${CIRCLE_WORKFLOW_ID:0:7}
 
-      - rollback_db_migrations:
-          id: ${CIRCLE_WORKFLOW_ID:0:7}      
+      # - rollback_db_migrations:
+      #     id: ${CIRCLE_WORKFLOW_ID:0:7}  
+      #     when: on_fail    
 
 
      # Here's where you will add some code to rollback on failure  
