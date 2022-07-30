@@ -185,7 +185,7 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-          keys: [backend-build-scan]
+          keys: [backend-build]
       - run:
           name: Scan back-end
           command: |
@@ -194,6 +194,9 @@ jobs:
             npm audit fix --audit-level=critical --force          
             npm audit fix --force             
             npm audit --audit-level=critical
+      - save_cache:
+          paths: [backend/node_modules]
+          key: backend-build-scan
   
   deploy-infrastructure:
     docker:
@@ -277,8 +280,8 @@ jobs:
       - image: circleci/node:13.8.0
     steps:
       - checkout
-      # - restore_cache:
-      #     keys: [backend-build-scan]
+      - restore_cache:
+          keys: [backend-build-scan]
       - run:
           name: install dependencies
           command: |
