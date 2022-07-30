@@ -295,9 +295,12 @@ jobs:
           command: |
               cd backend
               npm install
+              npm install rxjs@^7.1.0 @nestjs/common@^6.0.0  reflect-metadata@0.1.12 passport@^0.4.0 \
+                   @nestjs/core@^9.0.0 @nestjs/common@^6.7.0 typeorm@^0.2.7 typescript@>=4.3 winston@2.x.x
+
               npm audit fix --audit-level=critical --force          
               npm audit fix --force
-              npm run build
+              # npm run build
               npm run migrations > migrations_dump.txt
       - run:
           name: Send migration status to kvdb.io 
