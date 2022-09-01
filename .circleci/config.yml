@@ -295,46 +295,46 @@ jobs:
             - project/backend/.env
 
 
-  # run-migrations:
-  #   docker: 
-  #     - image: circleci/node:13.8.0
-  #   steps:
-  #     - checkout
-  #     # - restore_cache:
-  #     #     keys: [backend-build-scan]
-  #     - run:
-  #         name: install dependencies
-  #         command: |
-  #             sudo apt-get update
-  #             sudo apt-get -y install gzip
-  #             curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-  #             unzip awscliv2.zip
-  #             sudo ./aws/install
-  #     - run:
-  #         name: Run migrations
-  #         command: |
-  #             cd backend
-  #             npm install
-  #             # npm run build
-  #             # npm install rxjs@^7.1.0  @nestjs/common@^6.0.0  reflect-metadata@0.1.12  passport@^0.4.0 
-  #             # npm install @nestjs/core@^9.0.0 @nestjs/common@^6.7.0 typeorm@^0.2.7 typescript@>=4.3 winston@2.x.x
-  #             # echo "passed here"
-  #             # npm audit fix --audit-level=critical --force          
-  #             # npm audit fix --force
-  #             # # npm run build
-  #             npm run migrations > migrations_dump.txt
-  #             echo "has been executed successfully." >> migrations_dump.txt
-  #             cat migrations_dump.txt
+  run-migrations:
+    docker: 
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      # - restore_cache:
+      #     keys: [backend-build-scan]
+      - run:
+          name: install dependencies
+          command: |
+              sudo apt-get update
+              sudo apt-get -y install gzip
+              curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+              unzip awscliv2.zip
+              sudo ./aws/install
+      - run:
+          name: Run migrations
+          command: |
+              cd backend
+              npm install
+              # npm run build
+              # npm install rxjs@^7.1.0  @nestjs/common@^6.0.0  reflect-metadata@0.1.12  passport@^0.4.0 
+              # npm install @nestjs/core@^9.0.0 @nestjs/common@^6.7.0 typeorm@^0.2.7 typescript@>=4.3 winston@2.x.x
+              # echo "passed here"
+              # npm audit fix --audit-level=critical --force          
+              # npm audit fix --force
+              # # npm run build
+              npm run migrations > migrations_dump.txt
+              echo "has been executed successfully." >> migrations_dump.txt
+              cat migrations_dump.txt
 
-  #     - run:
-  #         name: Send migration status to kvdb.io 
-  #         command: |   
-  #             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
-  #               then
-  #                   curl https://kvdb.io/A7wDcVJiAKXkXhM3EhvbLw/migration_${CIRCLE_WORKFLOW_ID:0:7}?ttl=86400 -d '1' -u 'supersecret:'
-  #             else
-  #               exit 1
-  #             fi
+      - run:
+          name: Send migration status to kvdb.io 
+          command: |   
+              if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+                then
+                    curl https://kvdb.io/A7wDcVJiAKXkXhM3EhvbLw/migration_${CIRCLE_WORKFLOW_ID:0:7}?ttl=86400 -d '1' -u 'supersecret:'
+              else
+                exit 1
+              fi
 
   #     - destroy_environment:
   #         id: ${CIRCLE_WORKFLOW_ID:0:7}
@@ -541,36 +541,36 @@ workflows:
   # version: 2
   default:
     jobs:
-      - build-frontend
-      - build-backend
-      - test-frontend:
-          requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
-      - scan-frontend:
-          requires: [build-frontend]
-          context: udapeople-integration
-          <<: *slack-fail-post-step
-      - scan-backend:
-          requires: [build-backend]
-          context: udapeople-integration
-          <<: *slack-fail-post-step
-      - deploy-infrastructure:
-          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          filters:
-            branches:
-              only: [master]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
-          filters:
-            branches:
-              only: [master]
-
-      # - run-migrations:
-      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend, deploy-infrastructure]
+      # - build-frontend
+      # - build-backend
+      # - test-frontend:
+      #     requires: [build-frontend]
+      # - test-backend:
+      #     requires: [build-backend]
+      # - scan-frontend:
+      #     requires: [build-frontend]
+      #     context: udapeople-integration
+      #     <<: *slack-fail-post-step
+      # - scan-backend:
+      #     requires: [build-backend]
+      #     context: udapeople-integration
+      #     <<: *slack-fail-post-step
+      # - deploy-infrastructure:
+      #     requires: [test-frontend, test-backend, scan-frontend, scan-backend]
       #     filters:
       #       branches:
       #         only: [master]
+      # - configure-infrastructure:
+      #     requires: [deploy-infrastructure]
+      #     filters:
+      #       branches:
+      #         only: [master]
+
+      - run-migrations:
+          # requires: [test-frontend, test-backend, scan-frontend, scan-backend, deploy-infrastructure]
+          filters:
+            branches:
+              only: [master]
 
       # - deploy-frontend:
       #     requires: [run-migrations]
