@@ -39,6 +39,38 @@ commands:
                 npm run migrations:revert
             fi
 
+  awscli:
+    description: Install AWS CLI v2
+    steps:
+      - run:
+          name: Install AWS CLI v2
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+
+  ansible:
+    description: Install Ansible
+    steps:
+      - run:
+          name: Install Ansible
+          command: |
+            sudo apt update
+            sudo apt install software-properties-common -y
+            sudo add-apt-repository --yes --update ppa:ansible/ansible
+            sudo apt install ansible -y
+  nodejs:
+    description: Install Node.js 13
+    steps:
+      - run:
+          name: Install Node.js 13
+          command: |
+            # Install Node.js LTS version as our base Node.js version
+            curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+            sudo apt install -y nodejs
+            # Use n version manager to use Node.js v13.8.0
+            sudo npm install --global n
+            sudo n 13.8.0
 
 
 slack-fail-post-step: &slack-fail-post-step
@@ -294,7 +326,6 @@ jobs:
           paths:
             - project/backend/.env
 
-
   run-migrations:
     docker: 
       - image: circleci/node:13.8.0
@@ -383,57 +414,60 @@ jobs:
             npm install
             npm run build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
-            # aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            # aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive #will change to this later
             aws s3 cp dist s3://udapeople-ed0d014 --recursive
-            
+  
+  # you will allow this..
+
   #     - destroy-environment:
   #         workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
   #     - revert-migrations:
   #         workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
-  # deploy-backend:
-  #   docker:
-  #     - image: cimg/base:stable
-  #   steps:
-  #     - checkout
-  #     - awscli
-  #     - ansible
-  #     - nodejs
-  #     - add_ssh_keys:
-  #         fingerprints: ["00:07:74:8d:65:d3:a2:1b:2b:e1:8b:75:9f:03:fb:94"]
+  deploy-backend:
+    docker:
+      - image: cimg/base:stable
+    steps:
+      - checkout
+      - awscli
+      - ansible
+      - nodejs
+      - add_ssh_keys:
+          fingerprints: "b9:ea:25:67:0b:c7:5f:f4:2d:7d:aa:e5:f2:42:c9:1b"
 
-  #     - attach_workspace:
-  #         at: ~/
-  #     - restore_cache:
-  #         keys: [backend-build]
+      - attach_workspace:
+          at: ~/
+      - restore_cache:
+          keys: [backend-build]
 
-  #     - run:
-  #         name: Install dependencies
-  #         command: |
-  #           cd backend
-  #           npm install
-  #           npm run build
-  #           cd ..
-  #     - run:
-  #         name: Package Backend
-  #         command: |
-  #           tar -C backend -czvf artifact.tar.gz .
-  #           cp artifact.tar.gz  ~/
-  #     - run:
-  #         name: Checking the existence of inventory.txt && artifact.tar.gz file
-  #         command: |
-  #           cd .circleci/ansible
-  #           echo "Contents  of the inventory.txt file is -------"
-  #           cat inventory.txt
-  #           echo "Contents of files folder is -------"
-  #           ls ~/
-  #     - run:
-  #         name: Deploy backend
-  #         command: |
-  #           cd .circleci/ansible
-  #           cat inventory.txt
-  #           ansible-playbook -i inventory.txt deploy-backend.yml
+      - run:
+          name: Install dependencies
+          command: |
+            cd backend
+            npm install
+            npm run build
+            cd ..
+      - run:
+          name: Package Backend
+          command: |
+            tar -C backend -czvf artifact.tar.gz .
+            cp artifact.tar.gz  ~/
+      - run:
+          name: Checking the existence of inventory.txt && artifact.tar.gz file
+          command: |
+            cd .circleci/ansible
+            echo "Contents  of the inventory.txt file is -------"
+            cat inventory.txt
+            echo "Contents of files folder is -------"
+            ls ~/
+      - run:
+          name: Deploy backend
+          command: |
+            cd .circleci/ansible
+            cat inventory.txt
+            ansible-playbook -i inventory.txt deploy-backend.yml
+
   #     - destroy-environment:
   #         workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
@@ -574,8 +608,8 @@ workflows:
 
       - deploy-frontend:
           requires: [run-migrations]
-      # - deploy-backend:
-      #     requires: [run-migrations]
+      - deploy-backend:
+          requires: [run-migrations]
       # - smoke-test:
       #     requires: [deploy-backend, deploy-frontend]
       # - cloudfront-update:
