@@ -473,6 +473,7 @@ jobs:
           command: |
             tar -C backend -czvf artifact.tar.gz .
             cp artifact.tar.gz  ~/
+            ls ~/
       - run:
           name: Checking the existence of inventory.txt && artifact.tar.gz file
           command: |
@@ -510,7 +511,6 @@ jobs:
             BACKEND_PUBLIC_IP=$(aws ec2 describe-instances \
               # --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --filters "Name=tag:Name,Values=backend-ed0d014" \
-
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --output text)
             export API_URL=http://${BACKEND_PUBLIC_IP}:3030
