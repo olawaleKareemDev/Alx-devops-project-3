@@ -33,7 +33,7 @@ commands:
           when: << parameters.when >>
           working_directory: ./backend
           command: |
-            SUCESS = $(curl https://kvdb.io/A7wDcVJiAKXkXhM3EhvbLw/migration_<< parameters.id>>  -u 'supersecret:' )
+            SUCESS = $(curl -s https://kvdb.io/A7wDcVJiAKXkXhM3EhvbLw/migration_<< parameters.id>>  -u 'supersecret:' )
             if [[  "$SUCESS" == 1 ]]
             then 
                 npm run migrations:revert
