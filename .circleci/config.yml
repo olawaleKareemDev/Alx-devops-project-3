@@ -476,7 +476,7 @@ jobs:
       - run:
           name: Checking the existence of inventory.txt && artifact.tar.gz file
           command: |
-            cd .circleci/ansible
+            # cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
             ls -la
             cat inventory.txt
@@ -488,8 +488,7 @@ jobs:
             # cd .circleci/ansible
             # cat inventory.txt
             # ansible-playbook -i inventory.txt deploy-backend.yml
-            echo [all] > inventory.txt
-            echo  3.145.185.28 >> inventory.txt
+          
             ansible-playbook -i inventory.txt .circleci/ansible/deploy-backend.yml
 
   #     - destroy-environment:
