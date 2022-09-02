@@ -453,6 +453,10 @@ jobs:
                 --output text | sed 's/None//g' | sed -r '/^\s*$/d' >> inventory.txt
             cat inventory.txt
 
+      - persist_to_workspace:
+          root: /root/project
+          paths:
+            - inventory.txt
 
       - restore_cache:
           keys: [backend-build]
