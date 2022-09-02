@@ -437,7 +437,10 @@ jobs:
           fingerprints: "b9:ea:25:67:0b:c7:5f:f4:2d:7d:aa:e5:f2:42:c9:1b"
 
       - attach_workspace:
-          at: ~/
+          at: /root/project
+
+      # - attach_workspace:
+      #     at: ~/
       - restore_cache:
           keys: [backend-build]
 
