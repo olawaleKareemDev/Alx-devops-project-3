@@ -436,8 +436,8 @@ jobs:
       - add_ssh_keys:
           fingerprints: "b9:ea:25:67:0b:c7:5f:f4:2d:7d:aa:e5:f2:42:c9:1b"
 
-      - attach_workspace: # to be left
-          at: /root/project
+      # - attach_workspace: # to be left
+      #     at: /root/project
 
       # - attach_workspace:
       #     at: ~/
@@ -450,7 +450,6 @@ jobs:
                 ec2 describe-instances \
                 --query 'Reservations[*].Instances[*].[PublicIpAddress]' \
                 --output text | sed 's/None//g' | sed -r '/^\s*$/d' >> inventory.txt
-
 
 
       - restore_cache:
