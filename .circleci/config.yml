@@ -331,7 +331,7 @@ jobs:
           command: |   
               if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
                 then
-                    curl https://kvdb.io/A7wDcVJiAKXkXhM3EhvbLw/migration_${CIRCLE_WORKFLOW_ID:0:7}?ttl=86400 -d '1' -u 'supersecret:'
+                    curl https://kvdb.io/A7wDcVJiAKXkXhM3EhvbLw/migration_${CIRCLE_WORKFLOW_ID:0:7} -d '1' -u 'supersecret:'
               else
                 exit 1
               fi
