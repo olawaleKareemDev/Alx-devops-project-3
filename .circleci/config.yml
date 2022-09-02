@@ -326,6 +326,13 @@ jobs:
           paths:
             - project/backend/.env
 
+      - destroy_environment:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}
+
+      - rollback_db_migrations:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}  
+          when: on_fail   
+
   run-migrations:
     docker: 
       - image: circleci/node:13.8.0
