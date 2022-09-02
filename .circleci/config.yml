@@ -436,11 +436,23 @@ jobs:
       - add_ssh_keys:
           fingerprints: "b9:ea:25:67:0b:c7:5f:f4:2d:7d:aa:e5:f2:42:c9:1b"
 
-      - attach_workspace:
+      - attach_workspace: # to be left
           at: /root/project
 
       # - attach_workspace:
       #     at: ~/
+
+      - run: # to be removed
+          name: Get instance IDs
+          command: |
+            echo [all] > inventory.txt
+            aws --region us-east-2 \
+                ec2 describe-instances \
+                --query 'Reservations[*].Instances[*].[PublicIpAddress]' \
+                --output text | sed 's/None//g' | sed -r '/^\s*$/d' >> inventory.txt
+
+
+
       - restore_cache:
           keys: [backend-build]
 
