@@ -365,14 +365,13 @@ jobs:
                 exit 1
               fi
 
-  #     - destroy_environment:
-  #         id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy_environment:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}
 
-  
+      - rollback_db_migrations:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}  
+          when: on_fail    
 
-      # - rollback_db_migrations:
-      #     id: ${CIRCLE_WORKFLOW_ID:0:7}  
-      #     when: on_fail    
 
 
      # Here's where you will add some code to rollback on failure  
@@ -419,11 +418,12 @@ jobs:
   
   # you will allow this..
 
-      - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy_environment:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}
 
-      - revert-migrations:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - rollback_db_migrations:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}  
+          when: on_fail  
 
   deploy-backend:
     docker:
@@ -492,11 +492,12 @@ jobs:
           
             ansible-playbook -i inventory.txt .circleci/ansible/deploy-backend.yml
 
-      - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy_environment:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}
 
-      - revert-migrations:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - rollback_db_migrations:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}  
+          when: on_fail  
 
   smoke-test:
     docker:
@@ -531,11 +532,13 @@ jobs:
             else
               exit 1
             fi
-      - destroy-environment:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
 
-      - revert-migrations:
-          workflow_id: ${CIRCLE_WORKFLOW_ID:0:7}
+      - destroy_environment:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}
+
+      - rollback_db_migrations:
+          id: ${CIRCLE_WORKFLOW_ID:0:7}  
+          when: on_fail  
 
   # cloudfront-update:
   #   docker:
