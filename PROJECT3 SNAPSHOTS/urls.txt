@@ -1,3 +1,3 @@
 URL_01 :   https://github.com/olawaleKareemDev/Alx-devops-project-3
 URL_02 :   http://udapeople-a72fac8.s3-website.us-east-2.amazonaws.com
-cloudfront_url : https://d1ez9rf46zcl9o.cloudfront.net
+cloudfront_url : http://d1ez9rf46zcl9o.cloudfront.net
